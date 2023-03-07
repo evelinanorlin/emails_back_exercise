@@ -18,9 +18,24 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/add', function(req, res, next) {
-  fs.readFile("mails.txt", function(err, data){
+  fs.readFile("emails.json", function(err, data){
     if(err){
-      console.log(err)
+      console.log(err);
+
+      if(err.code == "ENOENT"){
+        console.log("err is ENOENT");
+
+        let newEmail = [req.body.email];
+        
+        fs.writeFile("emails.json", JSON.stringify(newEmail), function(err){
+          if(err){
+            console.log(err)
+          } 
+          });
+      }
+
+      res.send({message: "Ny fil skapad"})
+      return
     }
 
     const emails = JSON.parse(data);
@@ -29,9 +44,23 @@ router.post('/add', function(req, res, next) {
 
     emails.push(newEmail);
 
-    fs.writeFile("mails.txt", JSON.stringify(emails), function(err){
+    fs.writeFile("emails.json", JSON.stringify(emails), function(err){
       if(err){
         console.log(err)
+      } 
+  } )
+
+      fs.writeFile("mails.txt", JSON.stringify(emails), function(err){
+      if(err){
+        console.log(err);
+
+        let newEmail = req.body.email;
+        
+        fs.writeFile("mails.txt", JSON.stringify(newEmail), function(err){
+          if(err){
+            console.log(err)
+          } 
+          });
       } 
   } )
 
